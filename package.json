@@ -1,0 +1,21 @@
+{
+  "name": "k8s-cost-estimator",
+  "version": "1.0.0",
+  "description": "Kubernetes manifest YAML cost estimator for AWS, Azure, and GCP",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "update-pricing": "node scripts/update-all-pricing.js"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.7",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
+  "keywords": ["kubernetes", "k8s", "cost", "estimator", "aws", "azure", "gcp", "finops"],
+  "license": "MIT"
+}

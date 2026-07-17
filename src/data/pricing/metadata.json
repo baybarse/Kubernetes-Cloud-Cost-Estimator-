@@ -1,0 +1,9 @@
+{
+  "lastUpdated": "2026-07-17T00:00:00Z",
+  "source": "fallback",
+  "providers": {
+    "aws": { "status": "fallback", "timestamp": "2026-07-17T00:00:00Z", "regionsUpdated": 6 },
+    "azure": { "status": "fallback", "timestamp": "2026-07-17T00:00:00Z", "regionsUpdated": 6 },
+    "gcp": { "status": "fallback", "timestamp": "2026-07-17T00:00:00Z", "regionsUpdated": 6 }
+  }
+}

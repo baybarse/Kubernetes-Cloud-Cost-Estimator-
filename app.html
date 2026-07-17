@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K8s Cost Estimator — Shift-Left Cloud Cost Analysis</title>
+  <meta name="description" content="Free open-source tool to estimate Kubernetes workload costs across AWS EKS, Azure AKS, and GCP GKE. Upload YAML manifests, compare cloud prices, optimize regions." />
+  <meta name="keywords" content="kubernetes cost estimator, k8s pricing, aws eks cost, azure aks cost, gcp gke cost, cloud cost calculator, finops, shift-left, yaml cost analysis" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="K8s Cost Estimator — Cloud Cost Analysis Tool" />
+  <meta property="og:description" content="Estimate Kubernetes workload costs across AWS, Azure, and GCP. Free, open-source, no sign-up." />
+  <meta property="og:image" content="https://yourusername.github.io/k8scostestimator/screenshots/cost-cards.png" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
+    <header class="app-header" id="app-header">
+      <div class="app-logo">
+        <a href="./" style="display:flex;align-items:center;gap:12px;color:inherit;text-decoration:none;">
+          <div class="app-logo-icon">K8s</div>
+          <div>
+            <h1>Cost Estimator</h1>
+            <div class="subtitle">Shift-Left Cloud Cost Analysis</div>
+          </div>
+        </a>
+        <nav style="display:flex;gap:16px;margin-left:24px;align-items:center;">
+          <a href="./" style="color:var(--text-tertiary);font-size:0.85rem;text-decoration:none;">Home</a>
+          <a href="guide.html" style="color:var(--text-tertiary);font-size:0.85rem;text-decoration:none;">📖 K8s Converter</a>
+          <a href="https://kreosus.com/baybarse/about" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:linear-gradient(135deg,#FF813F,#E05500);color:white;border-radius:100px;font-weight:600;font-size:0.78rem;text-decoration:none;">☕ Support</a>
+        </nav>
+      </div>
+      <div class="header-controls">
+        <div class="pricing-freshness" id="pricing-freshness" title="Last pricing update">
+          <span class="loading-spinner" style="width:14px;height:14px;border-width:1.5px;"></span>
+          <span>Loading prices...</span>
+        </div>
+        <div class="select-wrapper">
+          <select id="currency-select" aria-label="Currency"></select>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Settings Bar ────────────────────────────────────────────────── -->
+    <div class="card" style="margin-bottom:var(--space-xl);padding:var(--space-md) var(--space-lg);" id="settings-bar">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-lg);">
+        <!-- Period Toggle -->
+        <div>
+          <label style="font-size:var(--font-size-xs);color:var(--text-tertiary);display:block;margin-bottom:4px;">Period</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" data-period="daily">Daily</button>
+            <button class="toggle-btn active" data-period="monthly">Monthly</button>
+            <button class="toggle-btn" data-period="yearly">Yearly</button>
+          </div>
+        </div>
+
+        <!-- Pricing Model -->
+        <div>
+          <label style="font-size:var(--font-size-xs);color:var(--text-tertiary);display:block;margin-bottom:4px;">Pricing Model</label>
+          <div class="toggle-group">
+            <button class="toggle-btn active" data-pricing-model="ondemand">On-Demand</button>
+            <button class="toggle-btn" data-pricing-model="reserved_1yr">Reserved 1yr</button>
+            <button class="toggle-btn" data-pricing-model="reserved_3yr">Reserved 3yr</button>
+            <button class="toggle-btn" data-pricing-model="spot">Spot</button>
+          </div>
+        </div>
+
+        <!-- Instance Family -->
+        <div>
+          <label style="font-size:var(--font-size-xs);color:var(--text-tertiary);display:block;margin-bottom:4px;">Instance Family</label>
+          <div class="select-wrapper">
+            <select id="instance-family-select" aria-label="Instance Family"></select>
+          </div>
+        </div>
+
+        <!-- DaemonSet Nodes -->
+        <div>
+          <label style="font-size:var(--font-size-xs);color:var(--text-tertiary);display:block;margin-bottom:4px;">DaemonSet Nodes</label>
+          <input type="number" class="input" id="daemonset-nodes-input" min="1" max="1000" value="3" style="width:80px;" />
+        </div>
+      </div>
+
+      <!-- Region Selects -->
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-lg);margin-top:var(--space-md);padding-top:var(--space-md);border-top:1px solid var(--glass-border);">
+        <div>
+          <label style="font-size:var(--font-size-xs);color:var(--aws-color);display:block;margin-bottom:4px;">☁️ AWS Region</label>
+          <div class="select-wrapper">
+            <select id="aws-region-select" aria-label="AWS Region"></select>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:var(--font-size-xs);color:var(--azure-color);display:block;margin-bottom:4px;">☁️ Azure Region</label>
+          <div class="select-wrapper">
+            <select id="azure-region-select" aria-label="Azure Region"></select>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:var(--font-size-xs);color:var(--gcp-color);display:block;margin-bottom:4px;">☁️ GCP Region</label>
+          <div class="select-wrapper">
+            <select id="gcp-region-select" aria-label="GCP Region"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Input Section ───────────────────────────────────────────────── -->
+    <div class="input-section">
+      <!-- File Upload -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📁</span> Upload YAML</div>
+        </div>
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-icon">📦</div>
+          <div class="drop-text">Drag & drop your K8s manifests here</div>
+          <div class="drop-hint">Supports .yaml and .yml files (max 5MB)</div>
+          <div class="drop-error" style="display:none;color:var(--severity-critical);margin-top:8px;font-size:0.8rem;"></div>
+        </div>
+        <input type="file" id="file-input" accept=".yaml,.yml" multiple hidden />
+        <ul class="file-list" id="file-list"></ul>
+      </div>
+
+      <!-- YAML Editor -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📝</span> YAML Editor</div>
+          <div style="display:flex;gap:var(--space-sm);">
+            <button class="btn btn-sm" id="load-sample-btn">📋 Load Sample</button>
+            <button class="btn btn-sm" id="clear-editor-btn">✕ Clear</button>
+          </div>
+        </div>
+        <div class="yaml-editor-container">
+          <div class="yaml-editor-header">
+            <span class="file-label">manifest.yaml</span>
+            <span id="yaml-validation" class="yaml-validation"></span>
+          </div>
+          <textarea class="yaml-textarea" id="yaml-textarea" 
+            placeholder="Paste your Kubernetes YAML manifest here...&#10;&#10;apiVersion: apps/v1&#10;kind: Deployment&#10;metadata:&#10;  name: my-app&#10;spec:&#10;  replicas: 3&#10;  ..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Analyze Button ──────────────────────────────────────────────── -->
+    <div style="text-align:center;margin-bottom:var(--space-xl);">
+      <button class="btn btn-primary btn-lg animate-glow" id="analyze-btn">
+        ⚡ Analyze & Estimate Costs
+      </button>
+      <div id="analyze-error" style="color:var(--severity-critical);font-size:var(--font-size-sm);margin-top:var(--space-sm);display:none;"></div>
+    </div>
+
+    <!-- ── Results Section ─────────────────────────────────────────────── -->
+    <section class="results-section" id="results-section" style="display:none;">
+      <h2 class="section-title"><span class="icon">💰</span> Cost Estimates</h2>
+      <div id="results-container"></div>
+    </section>
+
+    <!-- ── Bottom Section: Charts & Optimization ───────────────────────── -->
+    <div class="bottom-section" id="bottom-section" style="display:none;">
+      <!-- Charts -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📊</span> Cost Visualization</div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-chart-tab="comparison">Provider Comparison</button>
+          <button class="tab" data-chart-tab="breakdown">Workload Breakdown</button>
+        </div>
+        <div class="tab-content active" id="chart-comparison">
+          <div class="chart-container" style="height:280px;">
+            <canvas id="comparison-chart"></canvas>
+          </div>
+        </div>
+        <div class="tab-content" id="chart-breakdown">
+          <div class="chart-container" style="height:280px;">
+            <canvas id="breakdown-chart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Comparison -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">📈</span> Detailed Comparison</div>
+        </div>
+        <div id="comparison-container"></div>
+      </div>
+    </div>
+
+    <!-- ── Region Optimizer Section ────────────────────────────────────── -->
+    <section class="card" id="region-optimizer-section" style="display:none;margin-bottom:var(--space-xl);">
+      <div class="card-header">
+        <div class="card-title"><span class="icon">🌍</span> Region Optimizer</div>
+        <span style="font-size:var(--font-size-xs);color:var(--text-tertiary);">Find the cheapest region for your workloads</span>
+      </div>
+      <div id="region-optimizer-container"></div>
+    </section>
+
+    <!-- ── Optimization Section ────────────────────────────────────────── -->
+    <section class="card" id="optimization-section" style="display:none;margin-bottom:var(--space-3xl);">
+      <div class="card-header">
+        <div class="card-title"><span class="icon">🔍</span> Optimization Suggestions</div>
+      </div>
+      <div id="optimization-container"></div>
+    </section>
+
+    <!-- ── Footer ──────────────────────────────────────────────────────── -->
+    <footer class="app-footer">
+      <p>
+        K8s Cost Estimator — Open Source Shift-Left FinOps Tool
+        <br />
+        <span style="font-size:0.75rem;">
+          Pricing is approximate and based on public cloud provider rates. 
+          For exact pricing, refer to 
+          <a href="https://calculator.aws/" target="_blank">AWS</a>, 
+          <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank">Azure</a>, and 
+          <a href="https://cloud.google.com/products/calculator" target="_blank">GCP</a> pricing calculators.
+        </span>
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+
+  <style>
+    /* Inline critical styles for YAML validation */
+    .yaml-validation {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      transition: color 0.2s;
+    }
+    .yaml-validation.valid { color: var(--severity-success); }
+    .yaml-validation.invalid { color: var(--severity-critical); }
+
+    .results-header {
+      margin-bottom: var(--space-lg);
+    }
+    .results-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      padding: var(--space-md);
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--glass-border);
+    }
+    .summary-stat {
+      font-size: var(--font-size-sm);
+    }
+    .stat-label {
+      color: var(--text-tertiary);
+      margin-right: 4px;
+    }
+    .stat-value {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+  </style>
+
+  <!-- Fixed Coffee Button -->
+  <a href="https://kreosus.com/baybarse/about" target="_blank" style="position:fixed;bottom:24px;right:24px;z-index:90;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;background:linear-gradient(135deg,#FF813F,#E05500);color:white;font-weight:600;font-size:0.9rem;border-radius:100px;box-shadow:0 4px 20px rgba(255,129,63,0.3);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">☕ Buy me a coffee</a>
+</body>
+</html>
+
+
+

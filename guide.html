@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docker to Kubernetes Converter — From Dockerfile to K8s YAML Manifests</title>
+  <meta name="description" content="Interactive converter and generator: paste your Dockerfile, fill in deployment details, and get production-ready Kubernetes YAML manifests instantly." />
+  <meta name="keywords" content="docker to kubernetes, dockerfile guide, kubernetes yaml generator, docker build, k8s deployment, container orchestration" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Docker to Kubernetes Converter — Interactive YAML Generator" />
+  <meta property="og:description" content="From Dockerfile to production-ready K8s manifests — with an interactive generator." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a1a; --bg2: #111127; --bg3: #16163a;
+      --surface: rgba(255,255,255,0.04);
+      --glass: rgba(255,255,255,0.05);
+      --glass-border: rgba(255,255,255,0.08);
+      --text: #f1f5f9; --text2: #94a3b8; --text3: #64748b;
+      --primary: #6366f1; --primary-light: #818cf8;
+      --success: #10b981; --warning: #f59e0b; --info: #3b82f6; --danger: #ef4444;
+      --code-bg: rgba(0,0,0,0.5);
+      --radius: 12px;
+    }
+    html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.7;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, rgba(99,102,241,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 70%, rgba(16,185,129,0.04) 0%, transparent 60%);
+      pointer-events: none; z-index: -1;
+    }
+    a { color: var(--primary-light); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ─────────────────────────────── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,10,26,0.9); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border); padding: 14px 0;
+    }
+    .navbar .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.05rem; color: var(--text); }
+    .nav-logo-icon {
+      width: 36px; height: 36px; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 800; color: white;
+    }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-links a { color: var(--text2); font-size: 0.88rem; font-weight: 500; }
+    .nav-cta {
+      padding: 8px 18px; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 10px; color: white !important; font-weight: 600; font-size: 0.88rem;
+      text-decoration: none !important;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Coffee ─────────────────────────── */
+    .coffee-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #FF813F, #E05500);
+      color: white !important; font-weight: 600; font-size: 0.82rem;
+      border-radius: 100px; text-decoration: none !important;
+      box-shadow: 0 4px 16px rgba(255,129,63,0.25);
+      transition: all 0.2s;
+    }
+    .coffee-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,129,63,0.35); }
+    .coffee-fixed {
+      position: fixed; bottom: 24px; right: 24px; z-index: 90;
+      padding: 12px 20px; font-size: 0.9rem;
+    }
+
+    /* ── Header ─────────────────────────── */
+    .guide-header {
+      padding: 120px 0 50px; text-align: center;
+      border-bottom: 1px solid var(--glass-border); margin-bottom: 48px;
+    }
+    .breadcrumb { font-size: 0.85rem; color: var(--text3); margin-bottom: 16px; }
+    .guide-header h1 {
+      font-size: 2.8rem; font-weight: 900; line-height: 1.15; margin-bottom: 16px;
+      background: linear-gradient(135deg, #f1f5f9, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .guide-header p { font-size: 1.1rem; color: var(--text2); max-width: 620px; margin: 0 auto; }
+
+    /* ── Tabs ────────────────────────────── */
+    .page-tabs {
+      display: flex; justify-content: center; gap: 8px; margin-bottom: 48px;
+    }
+    .page-tab {
+      padding: 12px 28px; border-radius: 100px;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--glass-border);
+      background: var(--surface); color: var(--text2);
+      transition: all 0.2s;
+    }
+    .page-tab:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+    .page-tab.active {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white; border-color: transparent;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Generator ──────────────────────── */
+    .generator-card {
+      background: var(--glass); backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border); border-radius: 20px;
+      padding: 36px; margin-bottom: 32px;
+    }
+    .gen-title {
+      font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .gen-subtitle { color: var(--text2); font-size: 0.9rem; margin-bottom: 28px; }
+
+    .gen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 768px) { .gen-grid { grid-template-columns: 1fr; } }
+
+    .gen-field label {
+      display: block; font-size: 0.8rem; font-weight: 600; color: var(--text2);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .gen-field input, .gen-field select, .gen-field textarea {
+      width: 100%; padding: 10px 14px; font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+      border-radius: 10px; color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .gen-field input:focus, .gen-field select:focus, .gen-field textarea:focus {
+      outline: none; border-color: var(--primary);
+    }
+    .gen-field textarea {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+      min-height: 200px; resize: vertical; line-height: 1.6;
+    }
+    .gen-field .hint { font-size: 0.75rem; color: var(--text3); margin-top: 4px; }
+    .gen-field-full { grid-column: 1 / -1; }
+
+    .gen-actions {
+      display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;
+    }
+    .btn-gen {
+      padding: 12px 28px; border-radius: 12px; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; border: none; transition: all 0.2s;
+    }
+    .btn-gen-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white; box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+    }
+    .btn-gen-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(99,102,241,0.4); }
+    .btn-gen-secondary {
+      background: var(--surface); color: var(--text); border: 1px solid var(--glass-border);
+    }
+    .btn-gen-secondary:hover { background: rgba(255,255,255,0.08); }
+
+    .gen-output {
+      margin-top: 32px; display: none;
+    }
+    .gen-output.visible { display: block; }
+    .gen-output-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .gen-output-title { font-size: 1.1rem; font-weight: 700; }
+    .gen-output-actions { display: flex; gap: 8px; }
+
+    .output-pre {
+      background: var(--code-bg); border: 1px solid var(--glass-border);
+      border-radius: 14px; padding: 24px; overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+      line-height: 1.7; color: #e2e8f0; white-space: pre-wrap;
+      max-height: 600px; overflow-y: auto;
+    }
+
+    /* ── Flow Diagram ───────────────────── */
+    .flow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; flex-wrap: wrap; padding: 32px; margin: 32px 0;
+      background: var(--surface); border-radius: 16px; border: 1px solid var(--glass-border);
+    }
+    .flow-step {
+      padding: 14px 24px; border-radius: 12px; font-weight: 700;
+      font-size: 0.95rem; text-align: center; min-width: 120px;
+    }
+    .flow-arrow { font-size: 1.5rem; color: var(--text3); }
+    .flow-docker { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .flow-image { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+    .flow-k8s { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+    .flow-cloud { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+
+    /* ── Guide Sections ─────────────────── */
+    .toc {
+      background: var(--surface); border: 1px solid var(--glass-border);
+      border-radius: 16px; padding: 28px 32px; margin-bottom: 48px;
+    }
+    .toc-title { font-size: 0.82rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin-bottom: 6px; font-size: 0.92rem; }
+
+    .guide-section { margin-bottom: 56px; }
+    .guide-section h2 {
+      font-size: 1.7rem; font-weight: 800; margin-bottom: 16px;
+      padding-bottom: 12px; border-bottom: 2px solid var(--glass-border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .guide-section h3 { font-size: 1.15rem; font-weight: 700; margin: 24px 0 10px; color: var(--primary-light); }
+    .guide-section p { margin-bottom: 14px; color: var(--text2); }
+    .guide-section ul, .guide-section ol { margin: 10px 0 18px 20px; color: var(--text2); }
+    .guide-section li { margin-bottom: 8px; }
+    .guide-section strong { color: var(--text); }
+
+    pre {
+      background: var(--code-bg); border: 1px solid var(--glass-border);
+      border-radius: 12px; padding: 20px 24px; margin: 14px 0 22px;
+      overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem; line-height: 1.7; color: #e2e8f0;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+      background: rgba(99,102,241,0.1); padding: 2px 6px; border-radius: 4px;
+      color: var(--primary-light);
+    }
+    pre code { background: none; padding: 0; color: inherit; }
+    .comment { color: #64748b; } .keyword { color: #c084fc; }
+    .string { color: #34d399; } .number { color: #f59e0b; }
+
+    .callout {
+      border-radius: 12px; padding: 18px 22px; margin: 18px 0;
+      border-left: 4px solid; font-size: 0.92rem;
+    }
+    .callout-tip { background: rgba(16,185,129,0.08); border-color: var(--success); }
+    .callout-warn { background: rgba(245,158,11,0.08); border-color: var(--warning); }
+    .callout-info { background: rgba(59,130,246,0.08); border-color: var(--info); }
+    .callout-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 4px; }
+    .callout-tip .callout-title { color: var(--success); }
+    .callout-warn .callout-title { color: var(--warning); }
+    .callout-info .callout-title { color: var(--info); }
+    .callout p { margin-bottom: 0; }
+
+    .cta-bottom {
+      text-align: center; padding: 48px; margin: 40px 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.06));
+      border: 1px solid rgba(99,102,241,0.2); border-radius: 20px;
+    }
+    .cta-bottom h2 { font-size: 1.5rem; margin-bottom: 12px; }
+    .cta-bottom p { color: var(--text2); margin-bottom: 24px; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white; border-radius: 12px; font-weight: 600; font-size: 1rem;
+      text-decoration: none !important;
+    }
+
+    .footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 32px 0; text-align: center; color: var(--text3); font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .guide-header h1 { font-size: 1.8rem; }
+      .flow { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+      .page-tabs { flex-direction: column; align-items: stretch; }
+      .coffee-fixed { bottom: 12px; right: 12px; padding: 10px 16px; font-size: 0.82rem; }
+    }
+
+    /* ── Template Pills ─────────────────── */
+    .template-section { margin-bottom: 20px; }
+    .template-label {
+      font-size: 0.78rem; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+    .template-pills {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .template-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--glass-border);
+      color: var(--text2); font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .template-pill:hover {
+      border-color: rgba(255,255,255,0.15); color: var(--text);
+      background: rgba(255,255,255,0.06); transform: translateY(-2px);
+    }
+    .template-pill.active {
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1));
+      border-color: var(--primary); color: var(--primary-light);
+      box-shadow: 0 4px 16px rgba(99,102,241,0.15);
+    }
+    .template-pill .pill-icon {
+      width: 22px; height: 22px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container" style="max-width:1200px;">
+      <a href="./" class="nav-logo">
+        <div class="nav-logo-icon">K8s</div>
+        <span>Cost Estimator</span>
+      </a>
+      <div class="nav-links">
+        <a href="./">Home</a>
+        <a href="guide.html" style="color:var(--text);">K8s Converter</a>
+        <a href="https://kreosus.com/baybarse/about" target="_blank" class="coffee-btn">☕ Buy me a coffee</a>
+        <a href="app.html" class="nav-cta">🚀 Launch App</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Fixed Coffee Button -->
+  <a href="https://kreosus.com/baybarse/about" target="_blank" class="coffee-btn coffee-fixed">☕ Buy me a coffee</a>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="guide-header">
+      <div class="breadcrumb"><a href="./">Home</a> / Converter</div>
+      <h1>🐳 From Dockerfile<br/>☸️ to Kubernetes</h1>
+      <p>Paste your Dockerfile, fill in deployment details, and get production-ready Kubernetes YAML manifests — or read the step-by-step reference.</p>
+    </header>
+
+    <!-- Page Tabs -->
+    <div class="page-tabs">
+      <button class="page-tab active" data-tab="generator">⚡ YAML Generator</button>
+      <button class="page-tab" data-tab="guide">📖 Step-by-Step Reference</button>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 1: Interactive Generator                                     -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <div class="tab-panel active" id="panel-generator">
+
+      <!-- Step 1: Dockerfile Input -->
+      <div class="generator-card">
+        <div class="gen-title">📄 Step 1 — Choose a Template or Paste Your Dockerfile</div>
+        <div class="gen-subtitle">Pick a language template to get started quickly, or paste your own Dockerfile below.</div>
+
+        <div class="template-section">
+          <div class="template-label">Quick Start Templates</div>
+          <div class="template-pills">
+            <button class="template-pill" data-template="nodejs">
+              <span class="pill-icon" style="background:rgba(104,159,56,0.2);color:#8bc34a;">⚡</span>
+              Node.js
+            </button>
+            <button class="template-pill" data-template="python">
+              <span class="pill-icon" style="background:rgba(55,118,171,0.2);color:#4fc3f7;">🐍</span>
+              Python
+            </button>
+            <button class="template-pill" data-template="java">
+              <span class="pill-icon" style="background:rgba(244,81,30,0.2);color:#ff7043;">☕</span>
+              Java / Spring Boot
+            </button>
+            <button class="template-pill" data-template="dotnet">
+              <span class="pill-icon" style="background:rgba(81,45,168,0.2);color:#b39ddb;">🔷</span>
+              .NET Core
+            </button>
+            <button class="template-pill" data-template="go">
+              <span class="pill-icon" style="background:rgba(0,172,193,0.2);color:#4dd0e1;">🐹</span>
+              Go
+            </button>
+            <button class="template-pill" data-template="ruby">
+              <span class="pill-icon" style="background:rgba(198,40,40,0.2);color:#ef5350;">💎</span>
+              Ruby on Rails
+            </button>
+          </div>
+        </div>
+
+        <div class="gen-field gen-field-full">
+          <textarea id="dockerfile-input" placeholder="# Paste your Dockerfile here or choose a template above..."></textarea>
+        </div>
+        <div class="gen-actions">
+          <button class="btn-gen btn-gen-secondary" id="parse-dockerfile-btn">🔍 Auto-Detect Settings</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Deployment Config -->
+      <div class="generator-card">
+        <div class="gen-title">⚙️ Step 2 — Deployment Configuration</div>
+        <div class="gen-subtitle">Customize your Kubernetes deployment settings.</div>
+        <div class="gen-grid">
+          <div class="gen-field">
+            <label>App Name</label>
+            <input type="text" id="gen-app-name" value="my-app" placeholder="my-app" />
+            <div class="hint">Used for deployment, service, and label names</div>
+          </div>
+          <div class="gen-field">
+            <label>Namespace</label>
+            <input type="text" id="gen-namespace" value="default" placeholder="production" />
+          </div>
+          <div class="gen-field">
+            <label>Container Image</label>
+            <input type="text" id="gen-image" value="ghcr.io/username/my-app:1.0.0" placeholder="ghcr.io/user/app:1.0.0" />
+            <div class="hint">Full registry path with tag (avoid :latest)</div>
+          </div>
+          <div class="gen-field">
+            <label>Container Port</label>
+            <input type="number" id="gen-port" value="3000" min="1" max="65535" />
+            <div class="hint">Auto-detected from EXPOSE directive</div>
+          </div>
+          <div class="gen-field">
+            <label>Replicas</label>
+            <input type="number" id="gen-replicas" value="3" min="1" max="100" />
+          </div>
+          <div class="gen-field">
+            <label>Service Type</label>
+            <select id="gen-service-type">
+              <option value="ClusterIP">ClusterIP (internal only)</option>
+              <option value="LoadBalancer">LoadBalancer (external)</option>
+              <option value="NodePort">NodePort (node-level)</option>
+            </select>
+          </div>
+          <div class="gen-field">
+            <label>CPU Request</label>
+            <input type="text" id="gen-cpu-req" value="250m" placeholder="250m" />
+            <div class="hint">e.g. 100m, 250m, 500m, 1</div>
+          </div>
+          <div class="gen-field">
+            <label>CPU Limit</label>
+            <input type="text" id="gen-cpu-lim" value="500m" placeholder="500m" />
+          </div>
+          <div class="gen-field">
+            <label>Memory Request</label>
+            <input type="text" id="gen-mem-req" value="256Mi" placeholder="256Mi" />
+            <div class="hint">e.g. 128Mi, 256Mi, 512Mi, 1Gi</div>
+          </div>
+          <div class="gen-field">
+            <label>Memory Limit</label>
+            <input type="text" id="gen-mem-lim" value="512Mi" placeholder="512Mi" />
+          </div>
+          <div class="gen-field">
+            <label>Health Check Path</label>
+            <input type="text" id="gen-health-path" value="/health" placeholder="/health" />
+            <div class="hint">Leave empty to skip health probes</div>
+          </div>
+          <div class="gen-field">
+            <label>Environment Variables</label>
+            <input type="text" id="gen-env-vars" placeholder="KEY=value,NODE_ENV=production" />
+            <div class="hint">Comma-separated KEY=value pairs</div>
+          </div>
+        </div>
+
+        <!-- Extras -->
+        <div class="gen-grid" style="margin-top: 20px;">
+          <div class="gen-field" style="display:flex;align-items:center;gap:10px;">
+            <input type="checkbox" id="gen-hpa" checked style="width:auto;" />
+            <label for="gen-hpa" style="margin:0;text-transform:none;font-size:0.9rem;">Include HPA (auto-scaling)</label>
+          </div>
+          <div class="gen-field" style="display:flex;align-items:center;gap:10px;">
+            <input type="checkbox" id="gen-ingress" style="width:auto;" />
+            <label for="gen-ingress" style="margin:0;text-transform:none;font-size:0.9rem;">Include Ingress</label>
+          </div>
+        </div>
+
+        <div class="gen-actions">
+          <button class="btn-gen btn-gen-primary" id="generate-btn">☸️ Generate Kubernetes YAML</button>
+          <a href="app.html" class="btn-gen btn-gen-secondary" style="text-decoration:none;">💰 Estimate Cost →</a>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="gen-output" id="gen-output">
+        <div class="gen-output-header">
+          <div class="gen-output-title">☸️ Generated Kubernetes Manifests</div>
+          <div class="gen-output-actions">
+            <button class="btn-gen btn-gen-secondary" id="copy-yaml-btn" style="padding:8px 16px;font-size:0.85rem;">📋 Copy All</button>
+            <button class="btn-gen btn-gen-secondary" id="download-yaml-btn" style="padding:8px 16px;font-size:0.85rem;">📥 Download .yaml</button>
+            <a href="app.html" class="btn-gen btn-gen-primary" style="padding:8px 16px;font-size:0.85rem;text-decoration:none;">💰 Estimate Cost</a>
+          </div>
+        </div>
+        <pre class="output-pre" id="yaml-output"></pre>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- TAB 2: Step-by-Step Reference                                        -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="panel-guide">
+
+      <!-- TOC -->
+      <div class="toc">
+        <div class="toc-title">📑 Table of Contents</div>
+        <ol>
+          <li><a href="#overview">Overview — Flow Diagram</a></li>
+          <li><a href="#step1">Step 1: Creating a Dockerfile</a></li>
+          <li><a href="#step2">Step 2: Docker Image Build & Push</a></li>
+          <li><a href="#step3">Step 3: Kubernetes Deployment YAML</a></li>
+          <li><a href="#step4">Step 4: Exposing with a Service</a></li>
+          <li><a href="#step5">Step 5: ConfigMap & Secret</a></li>
+          <li><a href="#step6">Step 6: Resource Requests & Limits</a></li>
+          <li><a href="#step7">Step 7: Health Probes</a></li>
+          <li><a href="#step8">Step 8: Autoscaling with HPA</a></li>
+          <li><a href="#step9">Step 9: Ingress for External Access</a></li>
+          <li><a href="#step10">Step 10: Cost Estimation</a></li>
+        </ol>
+      </div>
+
+      <section class="guide-section" id="overview">
+        <h2>🔄 Overview</h2>
+        <p>Moving an application from Docker to Kubernetes follows this pipeline:</p>
+        <div class="flow">
+          <div class="flow-step flow-docker">📄 Dockerfile</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step flow-image">🐳 Docker Image</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step flow-k8s">☸️ K8s YAML</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step flow-cloud">☁️ Cloud Deploy</div>
+        </div>
+        <div class="callout callout-info">
+          <div class="callout-title">💡 Why Kubernetes?</div>
+          <p>Kubernetes automatically scales your containerized applications, provides self-healing, performs rolling updates, and works across multi-cloud environments. Instead of a single <code>docker run</code>, you manage your infrastructure as code through declarative YAML files.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="step1">
+        <h2>📄 Step 1: Creating a Dockerfile</h2>
+        <p>Everything starts with a <strong>Dockerfile</strong>. This file defines how your application is containerized.</p>
+        <h3>Simple Node.js Application</h3>
+<pre><code><span class="comment"># 1. Choose base image</span>
+<span class="keyword">FROM</span> node:<span class="number">20</span>-alpine
+<span class="keyword">WORKDIR</span> /app
+<span class="keyword">COPY</span> package*.json ./
+<span class="keyword">RUN</span> npm ci --only=production
+<span class="keyword">COPY</span> . .
+<span class="keyword">EXPOSE</span> <span class="number">3000</span>
+<span class="keyword">CMD</span> [<span class="string">"node"</span>, <span class="string">"server.js"</span>]</code></pre>
+        <h3>Multi-Stage Build (Production)</h3>
+<pre><code><span class="keyword">FROM</span> node:<span class="number">20</span>-alpine <span class="keyword">AS</span> builder
+<span class="keyword">WORKDIR</span> /app
+<span class="keyword">COPY</span> package*.json ./
+<span class="keyword">RUN</span> npm ci
+<span class="keyword">COPY</span> . .
+<span class="keyword">RUN</span> npm run build
+
+<span class="keyword">FROM</span> node:<span class="number">20</span>-alpine
+<span class="keyword">WORKDIR</span> /app
+<span class="keyword">COPY</span> --from=builder /app/dist ./dist
+<span class="keyword">COPY</span> --from=builder /app/package*.json ./
+<span class="keyword">RUN</span> npm ci --only=production
+<span class="keyword">EXPOSE</span> <span class="number">3000</span>
+<span class="keyword">USER</span> node
+<span class="keyword">CMD</span> [<span class="string">"node"</span>, <span class="string">"dist/server.js"</span>]</code></pre>
+        <div class="callout callout-tip">
+          <div class="callout-title">✅ Best Practice</div>
+          <p>Use multi-stage builds to keep your final image small. Run as a non-root user with <code>USER node</code>. Use <code>.dockerignore</code> to exclude unnecessary files.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="step2">
+        <h2>🐳 Step 2: Docker Image Build & Push</h2>
+<pre><code>docker build -t <span class="string">myapp:1.0.0</span> .
+docker run -p <span class="number">3000</span>:<span class="number">3000</span> <span class="string">myapp:1.0.0</span>
+docker tag myapp:<span class="number">1.0.0</span> <span class="string">ghcr.io/username/myapp:1.0.0</span>
+docker push <span class="string">ghcr.io/username/myapp:1.0.0</span></code></pre>
+        <p><strong>Popular container registries:</strong></p>
+        <ul>
+          <li><strong>Docker Hub</strong> — <code>docker.io/username/myapp</code></li>
+          <li><strong>GitHub Container Registry</strong> — <code>ghcr.io/username/myapp</code></li>
+          <li><strong>AWS ECR</strong> — <code>123456789.dkr.ecr.region.amazonaws.com/myapp</code></li>
+          <li><strong>Azure ACR</strong> — <code>myregistry.azurecr.io/myapp</code></li>
+          <li><strong>GCP Artifact Registry</strong> — <code>region-docker.pkg.dev/project/repo/myapp</code></li>
+        </ul>
+        <div class="callout callout-warn">
+          <div class="callout-title">⚠️ Warning</div>
+          <p>Avoid the <code>:latest</code> tag! Always use semantic versioning (<code>1.0.0</code>). This is critical for Kubernetes rollback and reproducibility.</p>
+        </div>
+      </section>
+
+      <section class="guide-section" id="step3"><h2>☸️ Step 3: Kubernetes Deployment</h2>
+<pre><code><span class="keyword">apiVersion</span>: apps/v1
+<span class="keyword">kind</span>: Deployment
+<span class="keyword">metadata</span>:
+  <span class="keyword">name</span>: <span class="string">myapp</span>
+  <span class="keyword">namespace</span>: <span class="string">production</span>
+<span class="keyword">spec</span>:
+  <span class="keyword">replicas</span>: <span class="number">3</span>
+  <span class="keyword">selector</span>:
+    <span class="keyword">matchLabels</span>:
+      app: <span class="string">myapp</span>
+  <span class="keyword">template</span>:
+    <span class="keyword">metadata</span>:
+      <span class="keyword">labels</span>:
+        app: <span class="string">myapp</span>
+    <span class="keyword">spec</span>:
+      <span class="keyword">containers</span>:
+        - <span class="keyword">name</span>: <span class="string">myapp</span>
+          <span class="keyword">image</span>: <span class="string">ghcr.io/username/myapp:1.0.0</span>
+          <span class="keyword">ports</span>:
+            - <span class="keyword">containerPort</span>: <span class="number">3000</span>
+          <span class="keyword">resources</span>:
+            <span class="keyword">requests</span>:
+              cpu: <span class="string">"250m"</span>
+              memory: <span class="string">"256Mi"</span>
+            <span class="keyword">limits</span>:
+              cpu: <span class="string">"500m"</span>
+              memory: <span class="string">"512Mi"</span></code></pre></section>
+
+      <section class="guide-section" id="step4"><h2>🌐 Step 4: Service</h2>
+<pre><code><span class="keyword">apiVersion</span>: v1
+<span class="keyword">kind</span>: Service
+<span class="keyword">metadata</span>:
+  <span class="keyword">name</span>: <span class="string">myapp-service</span>
+<span class="keyword">spec</span>:
+  <span class="keyword">type</span>: <span class="string">ClusterIP</span>
+  <span class="keyword">selector</span>:
+    app: <span class="string">myapp</span>
+  <span class="keyword">ports</span>:
+    - <span class="keyword">port</span>: <span class="number">80</span>
+      <span class="keyword">targetPort</span>: <span class="number">3000</span></code></pre>
+        <ul><li><code>ClusterIP</code> — Internal cluster access (default)</li><li><code>NodePort</code> — Opens port on every node (30000-32767)</li><li><code>LoadBalancer</code> — Gets a cloud load balancer</li></ul></section>
+
+      <section class="guide-section" id="step5"><h2>🔐 Step 5: ConfigMap & Secret</h2>
+<pre><code><span class="keyword">apiVersion</span>: v1
+<span class="keyword">kind</span>: ConfigMap
+<span class="keyword">metadata</span>:
+  <span class="keyword">name</span>: <span class="string">myapp-config</span>
+<span class="keyword">data</span>:
+  <span class="keyword">NODE_ENV</span>: <span class="string">"production"</span>
+  <span class="keyword">LOG_LEVEL</span>: <span class="string">"info"</span>
+---
+<span class="keyword">apiVersion</span>: v1
+<span class="keyword">kind</span>: Secret
+<span class="keyword">metadata</span>:
+  <span class="keyword">name</span>: <span class="string">myapp-secret</span>
+<span class="keyword">type</span>: Opaque
+<span class="keyword">data</span>:
+  <span class="keyword">DATABASE_URL</span>: <span class="string">cG9zdGdyZXM6Ly91c2VyOnBhc3NAaG9zdC9kYg==</span></code></pre></section>
+
+      <section class="guide-section" id="step6"><h2>📏 Step 6: Resource Requests & Limits</h2>
+        <p>This is <strong>the most critical part for cost estimation</strong>. Cloud providers charge based on <strong>requests</strong>:</p>
+<pre><code><span class="keyword">resources</span>:
+  <span class="keyword">requests</span>:          <span class="comment"># Minimum guaranteed resources</span>
+    cpu: <span class="string">"250m"</span>       <span class="comment"># 0.25 vCPU</span>
+    memory: <span class="string">"256Mi"</span>   <span class="comment"># 256 MiB RAM</span>
+  <span class="keyword">limits</span>:            <span class="comment"># Maximum allowed resources</span>
+    cpu: <span class="string">"500m"</span>       <span class="comment"># 0.5 vCPU</span>
+    memory: <span class="string">"512Mi"</span>   <span class="comment"># 512 MiB RAM</span></code></pre>
+        <div class="callout callout-tip"><div class="callout-title">💰 Cost Tip</div><p>Cloud providers charge based on <strong>requests</strong>, not limits. Keep requests close to actual usage and limits slightly above. Over-provisioning = wasted money.</p></div></section>
+
+      <section class="guide-section" id="step7"><h2>❤️ Step 7: Health Probes</h2>
+<pre><code><span class="keyword">livenessProbe</span>:
+  <span class="keyword">httpGet</span>:
+    <span class="keyword">path</span>: <span class="string">/health</span>
+    <span class="keyword">port</span>: <span class="number">3000</span>
+  <span class="keyword">initialDelaySeconds</span>: <span class="number">30</span>
+  <span class="keyword">periodSeconds</span>: <span class="number">10</span>
+<span class="keyword">readinessProbe</span>:
+  <span class="keyword">httpGet</span>:
+    <span class="keyword">path</span>: <span class="string">/ready</span>
+    <span class="keyword">port</span>: <span class="number">3000</span>
+  <span class="keyword">initialDelaySeconds</span>: <span class="number">5</span>
+  <span class="keyword">periodSeconds</span>: <span class="number">5</span></code></pre></section>
+
+      <section class="guide-section" id="step8"><h2>📈 Step 8: Autoscaling (HPA)</h2>
+<pre><code><span class="keyword">apiVersion</span>: autoscaling/v2
+<span class="keyword">kind</span>: HorizontalPodAutoscaler
+<span class="keyword">metadata</span>:
+  <span class="keyword">name</span>: <span class="string">myapp-hpa</span>
+<span class="keyword">spec</span>:
+  <span class="keyword">scaleTargetRef</span>:
+    <span class="keyword">apiVersion</span>: apps/v1
+    <span class="keyword">kind</span>: Deployment
+    <span class="keyword">name</span>: <span class="string">myapp</span>
+  <span class="keyword">minReplicas</span>: <span class="number">2</span>
+  <span class="keyword">maxReplicas</span>: <span class="number">10</span>
+  <span class="keyword">metrics</span>:
+    - <span class="keyword">type</span>: Resource
+      <span class="keyword">resource</span>:
+        <span class="keyword">name</span>: <span class="string">cpu</span>
+        <span class="keyword">target</span>:
+          <span class="keyword">type</span>: Utilization
+          <span class="keyword">averageUtilization</span>: <span class="number">70</span></code></pre></section>
+
+      <section class="guide-section" id="step9"><h2>🚪 Step 9: Ingress</h2>
+<pre><code><span class="keyword">apiVersion</span>: networking.k8s.io/v1
+<span class="keyword">kind</span>: Ingress
+<span class="keyword">metadata</span>:
+  <span class="keyword">name</span>: <span class="string">myapp-ingress</span>
+<span class="keyword">spec</span>:
+  <span class="keyword">ingressClassName</span>: <span class="string">nginx</span>
+  <span class="keyword">rules</span>:
+    - <span class="keyword">host</span>: <span class="string">myapp.example.com</span>
+      <span class="keyword">http</span>:
+        <span class="keyword">paths</span>:
+          - <span class="keyword">path</span>: <span class="string">/</span>
+            <span class="keyword">pathType</span>: <span class="string">Prefix</span>
+            <span class="keyword">backend</span>:
+              <span class="keyword">service</span>:
+                <span class="keyword">name</span>: <span class="string">myapp-service</span>
+                <span class="keyword">port</span>:
+                  <span class="keyword">number</span>: <span class="number">80</span></code></pre></section>
+
+      <section class="guide-section" id="step10"><h2>💰 Step 10: Cost Estimation</h2>
+        <p>Your Kubernetes YAMLs are ready. Use the <strong>K8s Cost Estimator</strong> to see estimated costs across AWS, Azure, and GCP. Switch to the <strong>Generator</strong> tab to auto-generate manifests from your Dockerfile, then send them directly to the Cost Estimator.</p>
+        <div class="callout callout-info"><div class="callout-title">🚀 Try It Now</div><p>Copy the generated YAML and paste it into the <a href="app.html">K8s Cost Estimator</a> to see pricing across all cloud providers and regions.</p></div>
+      </section>
+
+      <div class="cta-bottom">
+        <h2>💰 Estimate Your YAML Costs</h2>
+        <p>Upload your Kubernetes manifests and get instant multi-cloud cost estimates.</p>
+        <a href="app.html" class="cta-btn">🚀 Open Cost Estimator</a>
+      </div>
+    </div><!-- end reference panel -->
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>
+        K8s Cost Estimator — Open Source Shift-Left FinOps Tool<br />
+        <a href="./">Home</a> · <a href="app.html">Cost Estimator</a> · <a href="guide.html">Converter</a> · <a href="https://kreosus.com/baybarse/about" target="_blank">☕ Support</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // ─── Tab Switching ──────────────────────────────────────────
+    document.querySelectorAll('.page-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+      });
+    });
+
+    // ─── Dockerfile Templates ─────────────────────────────────────
+    const templates = {
+      nodejs: {
+        name: 'node',
+        port: 3000,
+        cpu: '250m', cpuLim: '500m', mem: '256Mi', memLim: '512Mi',
+        dockerfile: `# Node.js 20 — Production Multi-Stage Build
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+RUN npm ci --only=production
+EXPOSE 3000
+USER node
+CMD ["node", "dist/server.js"]`
+      },
+      python: {
+        name: 'python-app',
+        port: 8000,
+        cpu: '250m', cpuLim: '500m', mem: '256Mi', memLim: '512Mi',
+        dockerfile: `# Python 3.12 — FastAPI / Django
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]`
+      },
+      java: {
+        name: 'spring-app',
+        port: 8080,
+        cpu: '500m', cpuLim: '1', mem: '512Mi', memLim: '1Gi',
+        dockerfile: `# Java 21 — Spring Boot Multi-Stage Build
+FROM eclipse-temurin:21-jdk-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN ./mvnw package -DskipTests
+
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
+EXPOSE 8080
+USER 1000:1000
+ENTRYPOINT ["java", "-jar", "app.jar"]`
+      },
+      dotnet: {
+        name: 'dotnet-app',
+        port: 8080,
+        cpu: '250m', cpuLim: '500m', mem: '256Mi', memLim: '512Mi',
+        dockerfile: `# .NET 8 — ASP.NET Core Multi-Stage Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS builder
+WORKDIR /src
+COPY *.csproj .
+RUN dotnet restore
+COPY . .
+RUN dotnet publish -c Release -o /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=builder /app .
+EXPOSE 8080
+USER app
+ENTRYPOINT ["dotnet", "MyApp.dll"]`
+      },
+      go: {
+        name: 'go-service',
+        port: 8080,
+        cpu: '100m', cpuLim: '250m', mem: '64Mi', memLim: '128Mi',
+        dockerfile: `# Go 1.22 — Scratch Multi-Stage Build
+FROM golang:1.22-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o server .
+
+FROM scratch
+COPY --from=builder /app/server /server
+EXPOSE 8080
+ENTRYPOINT ["/server"]`
+      },
+      ruby: {
+        name: 'rails-app',
+        port: 3000,
+        cpu: '500m', cpuLim: '1', mem: '512Mi', memLim: '1Gi',
+        dockerfile: `# Ruby 3.3 — Rails Production
+FROM ruby:3.3-slim
+
+RUN apt-get update -qq && \\
+    apt-get install -y build-essential libpq-dev nodejs && \\
+    apt-get clean
+
+WORKDIR /app
+COPY Gemfile Gemfile.lock ./
+RUN bundle install --without development test
+
+COPY . .
+RUN bundle exec rake assets:precompile
+
+EXPOSE 3000
+CMD ["rails", "server", "-b", "0.0.0.0"]`
+      }
+    };
+
+    // Template click handlers
+    document.querySelectorAll('.template-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const key = pill.dataset.template;
+        const tpl = templates[key];
+        if (!tpl) return;
+
+        // Update active state
+        document.querySelectorAll('.template-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        // Fill Dockerfile
+        document.getElementById('dockerfile-input').value = tpl.dockerfile;
+
+        // Pre-fill recommended settings
+        document.getElementById('gen-app-name').value = tpl.name;
+        document.getElementById('gen-port').value = tpl.port;
+        document.getElementById('gen-cpu-req').value = tpl.cpu;
+        document.getElementById('gen-cpu-lim').value = tpl.cpuLim;
+        document.getElementById('gen-mem-req').value = tpl.mem;
+        document.getElementById('gen-mem-lim').value = tpl.memLim;
+
+        // Flash the auto-detect button
+        const btn = document.getElementById('parse-dockerfile-btn');
+        btn.textContent = '✅ Template Loaded';
+        btn.style.borderColor = '#10b981';
+        setTimeout(() => {
+          btn.textContent = '🔍 Auto-Detect Settings';
+          btn.style.borderColor = '';
+        }, 2000);
+      });
+    });
+
+    // ─── Dockerfile Parser ──────────────────────────────────────
+    document.getElementById('parse-dockerfile-btn').addEventListener('click', () => {
+      const content = document.getElementById('dockerfile-input').value;
+      if (!content.trim()) return;
+
+      // Detect EXPOSE
+      const exposeMatch = content.match(/EXPOSE\s+(\d+)/i);
+      if (exposeMatch) {
+        document.getElementById('gen-port').value = exposeMatch[1];
+      }
+
+      // Detect FROM for image hint
+      const fromMatch = content.match(/FROM\s+(\S+)/i);
+      if (fromMatch) {
+        const base = fromMatch[1].split(':')[0].split('/').pop();
+        const currentName = document.getElementById('gen-app-name').value;
+        if (currentName === 'my-app' || !currentName) {
+          document.getElementById('gen-app-name').value = base.replace(/[^a-z0-9-]/g, '-');
+        }
+      }
+
+      // Flash success
+      const btn = document.getElementById('parse-dockerfile-btn');
+      btn.textContent = '✅ Settings Updated';
+      btn.style.borderColor = '#10b981';
+      setTimeout(() => {
+        btn.textContent = '🔍 Auto-Detect Settings';
+        btn.style.borderColor = '';
+      }, 2000);
+    });
+
+    // ─── YAML Generator ─────────────────────────────────────────
+    document.getElementById('generate-btn').addEventListener('click', generateYAML);
+
+    function generateYAML() {
+      const name = document.getElementById('gen-app-name').value || 'my-app';
+      const ns = document.getElementById('gen-namespace').value || 'default';
+      const image = document.getElementById('gen-image').value || 'ghcr.io/username/my-app:1.0.0';
+      const port = parseInt(document.getElementById('gen-port').value) || 3000;
+      const replicas = parseInt(document.getElementById('gen-replicas').value) || 3;
+      const svcType = document.getElementById('gen-service-type').value;
+      const cpuReq = document.getElementById('gen-cpu-req').value || '250m';
+      const cpuLim = document.getElementById('gen-cpu-lim').value || '500m';
+      const memReq = document.getElementById('gen-mem-req').value || '256Mi';
+      const memLim = document.getElementById('gen-mem-lim').value || '512Mi';
+      const healthPath = document.getElementById('gen-health-path').value;
+      const envStr = document.getElementById('gen-env-vars').value;
+      const includeHPA = document.getElementById('gen-hpa').checked;
+      const includeIngress = document.getElementById('gen-ingress').checked;
+
+      // Build env section
+      let envYaml = '';
+      if (envStr.trim()) {
+        const pairs = envStr.split(',').map(p => p.trim()).filter(Boolean);
+        envYaml = '\n          env:';
+        for (const pair of pairs) {
+          const [key, ...rest] = pair.split('=');
+          envYaml += `\n            - name: ${key.trim()}\n              value: "${rest.join('=').trim()}"`;
+        }
+      }
+
+      // Health probes
+      let probeYaml = '';
+      if (healthPath.trim()) {
+        probeYaml = `
+          livenessProbe:
+            httpGet:
+              path: ${healthPath}
+              port: ${port}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: ${healthPath}
+              port: ${port}
+            initialDelaySeconds: 5
+            periodSeconds: 5`;
+      }
+
+      // Deployment
+      let yaml = `# ──────────────────────────────────────────────────────────────
+# Deployment: ${name}
+# Generated by K8s Cost Estimator
+# ──────────────────────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${name}
+  namespace: ${ns}
+  labels:
+    app: ${name}
+spec:
+  replicas: ${replicas}
+  selector:
+    matchLabels:
+      app: ${name}
+  template:
+    metadata:
+      labels:
+        app: ${name}
+    spec:
+      containers:
+        - name: ${name}
+          image: ${image}
+          ports:
+            - containerPort: ${port}
+          resources:
+            requests:
+              cpu: "${cpuReq}"
+              memory: "${memReq}"
+            limits:
+              cpu: "${cpuLim}"
+              memory: "${memLim}"${envYaml}${probeYaml}`;
+
+      // Service
+      yaml += `
+---
+# ──────────────────────────────────────────────────────────────
+# Service: ${name}-service
+# ──────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${name}-service
+  namespace: ${ns}
+spec:
+  type: ${svcType}
+  selector:
+    app: ${name}
+  ports:
+    - port: 80
+      targetPort: ${port}
+      protocol: TCP`;
+
+      // HPA
+      if (includeHPA) {
+        yaml += `
+---
+# ──────────────────────────────────────────────────────────────
+# HPA: ${name}-hpa
+# ──────────────────────────────────────────────────────────────
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ${name}-hpa
+  namespace: ${ns}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ${name}
+  minReplicas: ${Math.max(1, Math.floor(replicas / 2))}
+  maxReplicas: ${replicas * 3}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70`;
+      }
+
+      // Ingress
+      if (includeIngress) {
+        yaml += `
+---
+# ──────────────────────────────────────────────────────────────
+# Ingress: ${name}-ingress
+# ──────────────────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ${name}-ingress
+  namespace: ${ns}
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: ${name}.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ${name}-service
+                port:
+                  number: 80`;
+      }
+
+      // Show output
+      const outputEl = document.getElementById('gen-output');
+      const yamlEl = document.getElementById('yaml-output');
+      yamlEl.textContent = yaml;
+      outputEl.classList.add('visible');
+      outputEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ─── Copy & Download ─────────────────────────────────────────
+    document.getElementById('copy-yaml-btn').addEventListener('click', () => {
+      const yaml = document.getElementById('yaml-output').textContent;
+      navigator.clipboard.writeText(yaml).then(() => {
+        const btn = document.getElementById('copy-yaml-btn');
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy All', 2000);
+      });
+    });
+
+    document.getElementById('download-yaml-btn').addEventListener('click', () => {
+      const yaml = document.getElementById('yaml-output').textContent;
+      const name = document.getElementById('gen-app-name').value || 'k8s-manifests';
+      const blob = new Blob([yaml], { type: 'text/yaml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `${name}.yaml`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
+
