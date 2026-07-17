@@ -1,0 +1,141 @@
+{
+  "provider": "gcp",
+  "lastUpdated": "2026-07-17T03:22:27.729Z",
+  "regions": {
+    "us-central1": {
+      "displayName": "Iowa (us-central1)",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.032,
+          "perGiBHour": 0.0043
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.034,
+          "perGiBHour": 0.0047
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.03,
+          "perGiBHour": 0.004
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.37,
+        "reserved_3yr": 0.55,
+        "spot_average": 0.7
+      }
+    },
+    "us-east1": {
+      "displayName": "South Carolina (us-east1)",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.032,
+          "perGiBHour": 0.0043
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.034,
+          "perGiBHour": 0.0047
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.03,
+          "perGiBHour": 0.004
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.37,
+        "reserved_3yr": 0.55,
+        "spot_average": 0.7
+      }
+    },
+    "europe-west1": {
+      "displayName": "Belgium (europe-west1)",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.032,
+          "perGiBHour": 0.0043
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.034,
+          "perGiBHour": 0.0047
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.03,
+          "perGiBHour": 0.004
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.37,
+        "reserved_3yr": 0.55,
+        "spot_average": 0.7
+      }
+    },
+    "europe-west4": {
+      "displayName": "Netherlands (europe-west4)",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.032,
+          "perGiBHour": 0.0043
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.034,
+          "perGiBHour": 0.0047
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.03,
+          "perGiBHour": 0.004
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.37,
+        "reserved_3yr": 0.55,
+        "spot_average": 0.7
+      }
+    },
+    "asia-east1": {
+      "displayName": "Taiwan (asia-east1)",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.032,
+          "perGiBHour": 0.0043
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.034,
+          "perGiBHour": 0.0047
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.03,
+          "perGiBHour": 0.004
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.37,
+        "reserved_3yr": 0.55,
+        "spot_average": 0.7
+      }
+    },
+    "asia-northeast1": {
+      "displayName": "Tokyo (asia-northeast1)",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.032,
+          "perGiBHour": 0.0043
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.034,
+          "perGiBHour": 0.0047
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.03,
+          "perGiBHour": 0.004
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.37,
+        "reserved_3yr": 0.55,
+        "spot_average": 0.7
+      }
+    }
+  },
+  "managementFee": {
+    "gkePerHour": 0.1
+  }
+}
