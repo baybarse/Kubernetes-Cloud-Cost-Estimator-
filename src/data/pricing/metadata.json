@@ -1,9 +1,21 @@
 {
-  "lastUpdated": "2026-07-17T00:00:00Z",
-  "source": "fallback",
+  "lastUpdated": "2026-07-17T03:21:51.979Z",
+  "source": "api",
   "providers": {
-    "aws": { "status": "fallback", "timestamp": "2026-07-17T00:00:00Z", "regionsUpdated": 6 },
-    "azure": { "status": "fallback", "timestamp": "2026-07-17T00:00:00Z", "regionsUpdated": 6 },
-    "gcp": { "status": "fallback", "timestamp": "2026-07-17T00:00:00Z", "regionsUpdated": 6 }
+    "aws": {
+      "status": "success",
+      "timestamp": "2026-07-17T03:21:51.979Z",
+      "regionsUpdated": 6
+    },
+    "azure": {
+      "status": "success",
+      "timestamp": "2026-07-17T03:22:19.149Z",
+      "regionsUpdated": 6
+    },
+    "gcp": {
+      "status": "success",
+      "timestamp": "2026-07-17T03:22:27.729Z",
+      "regionsUpdated": 6
+    }
   }
 }

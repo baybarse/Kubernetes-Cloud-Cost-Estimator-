@@ -1,0 +1,159 @@
+{
+  "provider": "azure",
+  "lastUpdated": "2026-07-17T03:22:19.149Z",
+  "regions": {
+    "eastus": {
+      "displayName": "East US",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.0582,
+          "perGiBHour": 0.0146,
+          "itemCount": 529
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.0913,
+          "perGiBHour": 0.0457,
+          "itemCount": 178
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.0724,
+          "perGiBHour": 0.0091,
+          "itemCount": 570
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.38,
+        "reserved_3yr": 0.57,
+        "spot_average": 0.68
+      }
+    },
+    "westeurope": {
+      "displayName": "West Europe",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.0686,
+          "perGiBHour": 0.0171,
+          "itemCount": 543
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.117,
+          "perGiBHour": 0.0585,
+          "itemCount": 177
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.0871,
+          "perGiBHour": 0.0109,
+          "itemCount": 584
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.38,
+        "reserved_3yr": 0.57,
+        "spot_average": 0.68
+      }
+    },
+    "southeastasia": {
+      "displayName": "Southeast Asia",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.0688,
+          "perGiBHour": 0.0172,
+          "itemCount": 459
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.1211,
+          "perGiBHour": 0.0605,
+          "itemCount": 177
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.0857,
+          "perGiBHour": 0.0107,
+          "itemCount": 524
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.38,
+        "reserved_3yr": 0.57,
+        "spot_average": 0.68
+      }
+    },
+    "centralus": {
+      "displayName": "Central US",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.0624,
+          "perGiBHour": 0.0156,
+          "itemCount": 523
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.0982,
+          "perGiBHour": 0.0491,
+          "itemCount": 172
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.0787,
+          "perGiBHour": 0.0098,
+          "itemCount": 568
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.38,
+        "reserved_3yr": 0.57,
+        "spot_average": 0.68
+      }
+    },
+    "northeurope": {
+      "displayName": "North Europe",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.0641,
+          "perGiBHour": 0.016,
+          "itemCount": 525
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.105,
+          "perGiBHour": 0.0525,
+          "itemCount": 177
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.0814,
+          "perGiBHour": 0.0102,
+          "itemCount": 568
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.38,
+        "reserved_3yr": 0.57,
+        "spot_average": 0.68
+      }
+    },
+    "japaneast": {
+      "displayName": "Japan East",
+      "instanceFamilies": {
+        "general_purpose": {
+          "perVCpuHour": 0.0725,
+          "perGiBHour": 0.0181,
+          "itemCount": 463
+        },
+        "compute_optimized": {
+          "perVCpuHour": 0.1238,
+          "perGiBHour": 0.0619,
+          "itemCount": 177
+        },
+        "memory_optimized": {
+          "perVCpuHour": 0.0865,
+          "perGiBHour": 0.0108,
+          "itemCount": 524
+        }
+      },
+      "discounts": {
+        "reserved_1yr": 0.38,
+        "reserved_3yr": 0.57,
+        "spot_average": 0.68
+      }
+    }
+  },
+  "managementFee": {
+    "aksPerHour": 0
+  }
+}
