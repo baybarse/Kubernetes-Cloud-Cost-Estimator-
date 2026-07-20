@@ -1,20 +1,20 @@
 {
-  "lastUpdated": "2026-07-17T03:21:51.979Z",
+  "lastUpdated": "2026-07-20T08:40:18.408Z",
   "source": "api",
   "providers": {
     "aws": {
       "status": "success",
-      "timestamp": "2026-07-17T03:21:51.979Z",
+      "timestamp": "2026-07-20T08:40:18.408Z",
       "regionsUpdated": 6
     },
     "azure": {
       "status": "success",
-      "timestamp": "2026-07-17T03:22:19.149Z",
+      "timestamp": "2026-07-20T08:40:44.666Z",
       "regionsUpdated": 6
     },
     "gcp": {
       "status": "success",
-      "timestamp": "2026-07-17T03:22:27.729Z",
+      "timestamp": "2026-07-20T08:40:50.816Z",
       "regionsUpdated": 6
     }
   }
