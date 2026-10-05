@@ -1,14 +1,14 @@
 {
   "provider": "azure",
-  "lastUpdated": "2026-09-28T12:21:12.913Z",
+  "lastUpdated": "2026-10-05T13:00:57.500Z",
   "regions": {
     "eastus": {
       "displayName": "East US",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0586,
-          "perGiBHour": 0.0146,
-          "itemCount": 529
+          "perVCpuHour": 0.0592,
+          "perGiBHour": 0.0148,
+          "itemCount": 609
         },
         "compute_optimized": {
           "perVCpuHour": 0.0913,
@@ -16,9 +16,9 @@
           "itemCount": 178
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0728,
-          "perGiBHour": 0.0091,
-          "itemCount": 570
+          "perVCpuHour": 0.0738,
+          "perGiBHour": 0.0092,
+          "itemCount": 610
         }
       },
       "discounts": {
@@ -31,9 +31,9 @@
       "displayName": "West Europe",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.069,
-          "perGiBHour": 0.0172,
-          "itemCount": 543
+          "perVCpuHour": 0.0702,
+          "perGiBHour": 0.0176,
+          "itemCount": 583
         },
         "compute_optimized": {
           "perVCpuHour": 0.117,
@@ -41,9 +41,9 @@
           "itemCount": 177
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0875,
-          "perGiBHour": 0.0109,
-          "itemCount": 584
+          "perVCpuHour": 0.0886,
+          "perGiBHour": 0.0111,
+          "itemCount": 604
         }
       },
       "discounts": {
@@ -56,9 +56,9 @@
       "displayName": "Southeast Asia",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0691,
-          "perGiBHour": 0.0173,
-          "itemCount": 459
+          "perVCpuHour": 0.0703,
+          "perGiBHour": 0.0176,
+          "itemCount": 499
         },
         "compute_optimized": {
           "perVCpuHour": 0.1211,
@@ -66,9 +66,9 @@
           "itemCount": 177
         },
         "memory_optimized": {
-          "perVCpuHour": 0.086,
-          "perGiBHour": 0.0107,
-          "itemCount": 524
+          "perVCpuHour": 0.0871,
+          "perGiBHour": 0.0109,
+          "itemCount": 544
         }
       },
       "discounts": {
@@ -81,9 +81,9 @@
       "displayName": "Central US",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0626,
+          "perVCpuHour": 0.0625,
           "perGiBHour": 0.0156,
-          "itemCount": 523
+          "itemCount": 563
         },
         "compute_optimized": {
           "perVCpuHour": 0.0982,
@@ -91,9 +91,9 @@
           "itemCount": 172
         },
         "memory_optimized": {
-          "perVCpuHour": 0.079,
+          "perVCpuHour": 0.0791,
           "perGiBHour": 0.0099,
-          "itemCount": 568
+          "itemCount": 588
         }
       },
       "discounts": {
@@ -106,9 +106,9 @@
       "displayName": "North Europe",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0643,
-          "perGiBHour": 0.0161,
-          "itemCount": 525
+          "perVCpuHour": 0.0673,
+          "perGiBHour": 0.0168,
+          "itemCount": 605
         },
         "compute_optimized": {
           "perVCpuHour": 0.105,
@@ -116,9 +116,9 @@
           "itemCount": 177
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0816,
-          "perGiBHour": 0.0102,
-          "itemCount": 568
+          "perVCpuHour": 0.0845,
+          "perGiBHour": 0.0106,
+          "itemCount": 608
         }
       },
       "discounts": {
@@ -131,9 +131,9 @@
       "displayName": "Japan East",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0727,
-          "perGiBHour": 0.0182,
-          "itemCount": 463
+          "perVCpuHour": 0.0739,
+          "perGiBHour": 0.0185,
+          "itemCount": 503
         },
         "compute_optimized": {
           "perVCpuHour": 0.1238,
@@ -141,9 +141,9 @@
           "itemCount": 177
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0868,
-          "perGiBHour": 0.0109,
-          "itemCount": 524
+          "perVCpuHour": 0.0881,
+          "perGiBHour": 0.011,
+          "itemCount": 544
         }
       },
       "discounts": {
