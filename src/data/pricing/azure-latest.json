@@ -1,14 +1,14 @@
 {
   "provider": "azure",
-  "lastUpdated": "2026-10-26T11:51:51.856Z",
+  "lastUpdated": "2026-11-02T14:11:53.694Z",
   "regions": {
     "eastus": {
       "displayName": "East US",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0592,
+          "perVCpuHour": 0.059,
           "perGiBHour": 0.0148,
-          "itemCount": 609
+          "itemCount": 646
         },
         "compute_optimized": {
           "perVCpuHour": 0.0913,
@@ -18,7 +18,7 @@
         "memory_optimized": {
           "perVCpuHour": 0.0738,
           "perGiBHour": 0.0092,
-          "itemCount": 610
+          "itemCount": 611
         }
       },
       "discounts": {
@@ -32,8 +32,8 @@
       "instanceFamilies": {
         "general_purpose": {
           "perVCpuHour": 0.0702,
-          "perGiBHour": 0.0176,
-          "itemCount": 583
+          "perGiBHour": 0.0175,
+          "itemCount": 585
         },
         "compute_optimized": {
           "perVCpuHour": 0.117,
@@ -41,9 +41,9 @@
           "itemCount": 177
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0886,
+          "perVCpuHour": 0.0887,
           "perGiBHour": 0.0111,
-          "itemCount": 604
+          "itemCount": 608
         }
       },
       "discounts": {
@@ -58,7 +58,7 @@
         "general_purpose": {
           "perVCpuHour": 0.0703,
           "perGiBHour": 0.0176,
-          "itemCount": 499
+          "itemCount": 501
         },
         "compute_optimized": {
           "perVCpuHour": 0.1211,
@@ -66,9 +66,9 @@
           "itemCount": 177
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0871,
+          "perVCpuHour": 0.0873,
           "perGiBHour": 0.0109,
-          "itemCount": 544
+          "itemCount": 548
         }
       },
       "discounts": {
@@ -81,9 +81,9 @@
       "displayName": "Central US",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0625,
-          "perGiBHour": 0.0156,
-          "itemCount": 563
+          "perVCpuHour": 0.062,
+          "perGiBHour": 0.0155,
+          "itemCount": 600
         },
         "compute_optimized": {
           "perVCpuHour": 0.0982,
@@ -91,9 +91,9 @@
           "itemCount": 172
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0791,
+          "perVCpuHour": 0.0792,
           "perGiBHour": 0.0099,
-          "itemCount": 588
+          "itemCount": 592
         }
       },
       "discounts": {
@@ -108,7 +108,7 @@
         "general_purpose": {
           "perVCpuHour": 0.0673,
           "perGiBHour": 0.0168,
-          "itemCount": 605
+          "itemCount": 607
         },
         "compute_optimized": {
           "perVCpuHour": 0.105,
@@ -118,7 +118,7 @@
         "memory_optimized": {
           "perVCpuHour": 0.0845,
           "perGiBHour": 0.0106,
-          "itemCount": 608
+          "itemCount": 612
         }
       },
       "discounts": {
@@ -133,7 +133,7 @@
         "general_purpose": {
           "perVCpuHour": 0.0739,
           "perGiBHour": 0.0185,
-          "itemCount": 503
+          "itemCount": 505
         },
         "compute_optimized": {
           "perVCpuHour": 0.1238,
@@ -141,9 +141,9 @@
           "itemCount": 177
         },
         "memory_optimized": {
-          "perVCpuHour": 0.0881,
+          "perVCpuHour": 0.0883,
           "perGiBHour": 0.011,
-          "itemCount": 544
+          "itemCount": 548
         }
       },
       "discounts": {
