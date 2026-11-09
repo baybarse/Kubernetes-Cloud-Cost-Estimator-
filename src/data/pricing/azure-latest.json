@@ -1,14 +1,14 @@
 {
   "provider": "azure",
-  "lastUpdated": "2026-11-02T14:11:53.694Z",
+  "lastUpdated": "2026-11-09T14:41:11.571Z",
   "regions": {
     "eastus": {
       "displayName": "East US",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.059,
-          "perGiBHour": 0.0148,
-          "itemCount": 646
+          "perVCpuHour": 0.0589,
+          "perGiBHour": 0.0147,
+          "itemCount": 651
         },
         "compute_optimized": {
           "perVCpuHour": 0.0913,
