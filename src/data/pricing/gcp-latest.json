@@ -1,6 +1,6 @@
 {
   "provider": "gcp",
-  "lastUpdated": "2026-11-16T14:17:45.640Z",
+  "lastUpdated": "2026-11-23T16:50:24.610Z",
   "regions": {
     "us-central1": {
       "displayName": "Iowa (us-central1)",

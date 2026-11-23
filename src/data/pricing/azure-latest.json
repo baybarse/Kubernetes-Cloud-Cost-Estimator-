@@ -1,12 +1,12 @@
 {
   "provider": "azure",
-  "lastUpdated": "2026-11-16T14:17:34.709Z",
+  "lastUpdated": "2026-11-23T16:50:17.024Z",
   "regions": {
     "eastus": {
       "displayName": "East US",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0588,
+          "perVCpuHour": 0.0587,
           "perGiBHour": 0.0147,
           "itemCount": 651
         },
@@ -31,7 +31,7 @@
       "displayName": "West Europe",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.07,
+          "perVCpuHour": 0.0698,
           "perGiBHour": 0.0175,
           "itemCount": 585
         },
@@ -56,7 +56,7 @@
       "displayName": "Southeast Asia",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0701,
+          "perVCpuHour": 0.0699,
           "perGiBHour": 0.0175,
           "itemCount": 501
         },
@@ -81,8 +81,8 @@
       "displayName": "Central US",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0619,
-          "perGiBHour": 0.0155,
+          "perVCpuHour": 0.0618,
+          "perGiBHour": 0.0154,
           "itemCount": 600
         },
         "compute_optimized": {
@@ -106,8 +106,8 @@
       "displayName": "North Europe",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0671,
-          "perGiBHour": 0.0168,
+          "perVCpuHour": 0.0669,
+          "perGiBHour": 0.0167,
           "itemCount": 607
         },
         "compute_optimized": {
@@ -131,7 +131,7 @@
       "displayName": "Japan East",
       "instanceFamilies": {
         "general_purpose": {
-          "perVCpuHour": 0.0736,
+          "perVCpuHour": 0.0734,
           "perGiBHour": 0.0184,
           "itemCount": 505
         },
